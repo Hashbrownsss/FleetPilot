@@ -1,0 +1,178 @@
+services:
+  opamp-server:
+    build:
+      context: ./opamp-go
+      dockerfile: internal/examples/Dockerfile.server
+    ports:
+      - "4320:4320"
+      - "4321:4321"
+    restart: unless-stopped
+
+  opampsupervisor-1:
+    build:
+      context: ./opentelemetry-collector-contrib
+      dockerfile: local/Dockerfile.opampsupervisor
+    depends_on:
+      - opamp-server
+    volumes:
+      - ./fleet_agents/agent-1/supervisor.yaml:/etc/otel/supervisor.yaml:ro
+      - ./fleet_agents/agent-1/collector-supervised.yaml:/etc/otel/config.yaml:ro
+      - ./fleet_agents/agent-1/certs:/etc/otel/certs:ro
+      - ./fleet_agents/agent-1/supervisor-data:/etc/otel/supervisor-data
+    restart: unless-stopped
+
+  opampsupervisor-2:
+    build:
+      context: ./opentelemetry-collector-contrib
+      dockerfile: local/Dockerfile.opampsupervisor
+    depends_on:
+      - opamp-server
+    volumes:
+      - ./fleet_agents/agent-2/supervisor.yaml:/etc/otel/supervisor.yaml:ro
+      - ./fleet_agents/agent-2/collector-supervised.yaml:/etc/otel/config.yaml:ro
+      - ./fleet_agents/agent-2/certs:/etc/otel/certs:ro
+      - ./fleet_agents/agent-2/supervisor-data:/etc/otel/supervisor-data
+    restart: unless-stopped
+
+  opampsupervisor-3:
+    build:
+      context: ./opentelemetry-collector-contrib
+      dockerfile: local/Dockerfile.opampsupervisor
+    depends_on:
+      - opamp-server
+    volumes:
+      - ./fleet_agents/agent-3/supervisor.yaml:/etc/otel/supervisor.yaml:ro
+      - ./fleet_agents/agent-3/collector-supervised.yaml:/etc/otel/config.yaml:ro
+      - ./fleet_agents/agent-3/certs:/etc/otel/certs:ro
+      - ./fleet_agents/agent-3/supervisor-data:/etc/otel/supervisor-data
+    restart: unless-stopped
+
+  opampsupervisor-4:
+    build:
+      context: ./opentelemetry-collector-contrib
+      dockerfile: local/Dockerfile.opampsupervisor
+    depends_on:
+      - opamp-server
+    volumes:
+      - ./fleet_agents/agent-4/supervisor.yaml:/etc/otel/supervisor.yaml:ro
+      - ./fleet_agents/agent-4/collector-supervised.yaml:/etc/otel/config.yaml:ro
+      - ./fleet_agents/agent-4/certs:/etc/otel/certs:ro
+      - ./fleet_agents/agent-4/supervisor-data:/etc/otel/supervisor-data
+    restart: unless-stopped
+
+  opampsupervisor-5:
+    build:
+      context: ./opentelemetry-collector-contrib
+      dockerfile: local/Dockerfile.opampsupervisor
+    depends_on:
+      - opamp-server
+    volumes:
+      - ./fleet_agents/agent-5/supervisor.yaml:/etc/otel/supervisor.yaml:ro
+      - ./fleet_agents/agent-5/collector-supervised.yaml:/etc/otel/config.yaml:ro
+      - ./fleet_agents/agent-5/certs:/etc/otel/certs:ro
+      - ./fleet_agents/agent-5/supervisor-data:/etc/otel/supervisor-data
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    depends_on:
+      - opampsupervisor-1
+      - opampsupervisor-2
+      - opampsupervisor-3
+      - opampsupervisor-4
+      - opampsupervisor-5
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./opentelemetry-collector-contrib/local/prometheus-compose.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+      - ./opentelemetry-collector-contrib/local/rules.yml:/etc/prometheus/rules.yml:ro
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./opentelemetry-collector-contrib/local/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./opentelemetry-collector-contrib/local/hostmetrics-dashboard.json:/var/lib/grafana/dashboards/hostmetrics-dashboard.json:ro
+    restart: unless-stopped
+  # ----------------------------------------------------
+  # AIOps Backbone: Kafka (Zero Data Loss Buffer)
+  # ----------------------------------------------------
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    environment:
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:9094,CONTROLLER://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    volumes:
+      - kafka_data:/tmp/kraft-combined-logs
+
+  # ----------------------------------------------------
+  # AIOps Backbone: Alertmanager (Deterministic Rules)
+  # ----------------------------------------------------
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/config.yml
+
+  # ----------------------------------------------------
+  # Kafka Dashboard Web UI
+  # ----------------------------------------------------
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8085:8080"
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=AIOps-Fleet-Kafka
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  # ----------------------------------------------------
+  # Identity Provider (IdP): Keycloak SSO
+  # ----------------------------------------------------
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./aiops-realm-realm.json:/opt/keycloak/data/import/aiops-realm-realm.json:ro
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  grafana-data:
+  kafka_data: 

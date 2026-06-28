@@ -1,0 +1,169 @@
+{
+  "agents": {
+    "019e87db-e86e-7613-b5c7-b10c35cb552c": {
+      "id": "019e87db-e86e-7613-b5c7-b10c35cb552c",
+      "name": "physical-agent-01",
+      "groups": [
+        "Default"
+      ],
+      "status": "Healthy",
+      "os": "windows",
+      "ip": "127.0.0.1",
+      "type": "physical",
+      "environment": "dev",
+      "region": "apac",
+      "deployment_type": "on-prem",
+      "custom_config_override": ""
+    },
+    "virtual-db-node-01": {
+      "id": "virtual-db-node-01",
+      "name": "db-node-01",
+      "groups": [
+        "Database-Nodes"
+      ],
+      "status": "Healthy",
+      "os": "linux",
+      "ip": "192.168.1.10",
+      "type": "virtual",
+      "environment": "dev",
+      "region": "us",
+      "deployment_type": "gcp",
+      "custom_config_override": ""
+    },
+    "virtual-db-node-02": {
+      "id": "virtual-db-node-02",
+      "name": "db-node-02",
+      "groups": [
+        "Database-Nodes"
+      ],
+      "status": "Warning",
+      "os": "linux",
+      "ip": "192.168.1.11",
+      "type": "virtual",
+      "environment": "dev",
+      "region": "eu",
+      "deployment_type": "dmz",
+      "custom_config_override": "receivers:\n  hostmetrics:\n    collection_interval: 2s"
+    },
+    "virtual-web-node-01": {
+      "id": "virtual-web-node-01",
+      "name": "web-node-01",
+      "groups": [
+        "Web-Servers"
+      ],
+      "status": "Healthy",
+      "os": "linux",
+      "ip": "192.168.2.20",
+      "type": "virtual",
+      "environment": "prod",
+      "region": "apac",
+      "deployment_type": "on-prem",
+      "custom_config_override": ""
+    },
+    "virtual-web-node-02": {
+      "id": "virtual-web-node-02",
+      "name": "web-node-02",
+      "groups": [
+        "Web-Servers"
+      ],
+      "status": "Offline",
+      "os": "windows",
+      "ip": "192.168.2.21",
+      "type": "virtual",
+      "environment": "dev",
+      "region": "us",
+      "deployment_type": "gcp",
+      "custom_config_override": ""
+    },
+    "019ec4bb-2782-7ea2-9cc2-ecd74b56c2e7": {
+      "id": "019ec4bb-2782-7ea2-9cc2-ecd74b56c2e7",
+      "name": "physical-agent-019ec4bb",
+      "groups": [
+        "Default"
+      ],
+      "status": "Healthy",
+      "os": "windows",
+      "ip": "127.0.0.1",
+      "type": "physical",
+      "environment": "dev",
+      "region": "apac",
+      "deployment_type": "on-prem",
+      "custom_config_override": "extensions:\n  health_check:\n    endpoint: 0.0.0.0:13133\nservice:\n  extensions:\n    - health_check\n  pipelines:\n    metrics:\n      receivers:\n        - hostmetrics_custom\n      processors: []\n      exporters: []\nreceivers:\n  hostmetrics_custom:\n    collection_interval: 5s\n    scrapers:\n      cpu: null\n      memory: null\n      disk: null\n      network: null\n"
+    },
+    "019ec4bb-2782-7ec5-bb17-659485b64251": {
+      "id": "019ec4bb-2782-7ec5-bb17-659485b64251",
+      "name": "physical-agent-019ec4bb",
+      "groups": [
+        "Database-Nodes"
+      ],
+      "status": "Healthy",
+      "os": "windows",
+      "ip": "127.0.0.1",
+      "type": "physical",
+      "environment": "prod",
+      "region": "apac",
+      "deployment_type": "on-prem",
+      "custom_config_override": ""
+    },
+    "019ec4bb-2784-7cee-ba50-397c94e0d128": {
+      "id": "019ec4bb-2784-7cee-ba50-397c94e0d128",
+      "name": "physical-agent-019ec4bb",
+      "groups": [
+        "Default"
+      ],
+      "status": "Healthy",
+      "os": "windows",
+      "ip": "127.0.0.1",
+      "type": "physical",
+      "environment": "prod",
+      "region": "apac",
+      "deployment_type": "on-prem",
+      "custom_config_override": ""
+    },
+    "019ec4bb-27cc-7c3e-b64f-357da59f33a1": {
+      "id": "019ec4bb-27cc-7c3e-b64f-357da59f33a1",
+      "name": "physical-agent-019ec4bb",
+      "groups": [
+        "Default"
+      ],
+      "status": "Healthy",
+      "os": "windows",
+      "ip": "127.0.0.1",
+      "type": "physical",
+      "environment": "prod",
+      "region": "apac",
+      "deployment_type": "on-prem",
+      "custom_config_override": ""
+    },
+    "019ec4bb-2816-71d3-ac0d-9c1fc432f284": {
+      "id": "019ec4bb-2816-71d3-ac0d-9c1fc432f284",
+      "name": "physical-agent-019ec4bb",
+      "groups": [
+        "Default"
+      ],
+      "status": "Healthy",
+      "os": "windows",
+      "ip": "127.0.0.1",
+      "type": "physical",
+      "environment": "prod",
+      "region": "apac",
+      "deployment_type": "on-prem",
+      "custom_config_override": ""
+    },
+    "019ecada-bfc3-7580-9330-76bef4c11693": {
+      "id": "019ecada-bfc3-7580-9330-76bef4c11693",
+      "name": "physical-agent-019ecada",
+      "groups": [
+        "Default"
+      ],
+      "status": "Healthy",
+      "os": "windows",
+      "ip": "127.0.0.1",
+      "type": "physical",
+      "environment": "prod",
+      "region": "apac",
+      "deployment_type": "on-prem",
+      "custom_config_override": ""
+    }
+  }
+}

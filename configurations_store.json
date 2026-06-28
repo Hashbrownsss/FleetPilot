@@ -1,0 +1,61 @@
+{
+  "Default": {
+    "name": "Default",
+    "description": "Standard host monitoring configuration.",
+    "platform": "Cross-Platform",
+    "version": 1,
+    "revisions": [
+      {
+        "version": 1,
+        "timestamp": 1781759868.4195957,
+        "config": "receivers:\n  hostmetrics:\n    collection_interval: 10s\n    scrapers:\n      cpu:\n      memory:\n      disk:\n      network:\n      processes:\nexporters:\n  otlp:\n    endpoint: \"localhost:4317\"\nservice:\n  pipelines:\n    metrics:\n      receivers: [hostmetrics]\n      processors: []\n      exporters: [otlp]",
+        "description": "System generated default configuration",
+        "author": "system"
+      }
+    ]
+  },
+  "Database-Nodes": {
+    "name": "Database-Nodes",
+    "description": "Enhanced scraper configuration optimized for database workloads.",
+    "platform": "Linux",
+    "version": 3,
+    "revisions": [
+      {
+        "version": 1,
+        "timestamp": 1781759868.4201946,
+        "config": "receivers:\n  hostmetrics:\n    collection_interval: 5s\n    scrapers:\n      cpu:\n      memory:\n      disk:\n      network:\n      processes:\n  postgresql:\n    endpoint: \"localhost:5432\"\n    username: \"postgres\"\nexporters:\n  otlp:\n    endpoint: \"localhost:4317\"\nservice:\n  pipelines:\n    metrics:\n      receivers: [hostmetrics, postgresql]\n      processors: []\n      exporters: [otlp]",
+        "description": "System generated database configuration",
+        "author": "system"
+      },
+      {
+        "version": 2,
+        "timestamp": 1781767713.4372945,
+        "config": "receivers:\n  hostmetrics:\n    collection_interval: 5s\n    scrapers:\n      cpu:\n      memory:\n      disk:\n      network:\n      processes:\n  postgresql:\n    endpoint: \"localhost:5432\"\n    username: \"postgres\"\nexporters:\n  otlp:\n    endpoint: \"localhost:4317\"\nservice:\n  pipelines:\n    metrics:\n      receivers: [hostmetrics, postgresql]\n      processors: []\n      exporters: [otlp]",
+        "description": "Updates configuration metrics and settings",
+        "author": "docker_admin"
+      },
+      {
+        "version": 3,
+        "timestamp": 1781767748.767606,
+        "config": "receivers:\n  hostmetrics:\n    collection_interval: 5s\n    scrapers:\n      cpu: null\n      memory:\n        metrics:\n          system.memory.usage:\n            enabled: false\n      disk: null\n      network: null\n      processes: null\n      load:\n        metrics:\n          system.cpu.load_average.5m:\n            enabled: false\n          system.cpu.load_average.15m:\n            enabled: false\n          system.cpu.load_average.1m:\n            enabled: false\n  postgresql:\n    endpoint: localhost:5432\n    username: postgres\nexporters:\n  otlp:\n    endpoint: localhost:4317\nservice:\n  pipelines:\n    metrics:\n      receivers:\n        - hostmetrics\n        - postgresql\n      processors: []\n      exporters:\n        - otlp\n",
+        "description": "Updates configuration metrics and settings",
+        "author": "docker_admin"
+      }
+    ]
+  },
+  "Web-Servers": {
+    "name": "Web-Servers",
+    "description": "Web server telemetry configuration for traffic and request rates.",
+    "platform": "Linux",
+    "version": 1,
+    "revisions": [
+      {
+        "version": 1,
+        "timestamp": 1781759868.4202034,
+        "config": "receivers:\n  hostmetrics:\n    collection_interval: 15s\n    scrapers:\n      cpu:\n      memory:\n      disk:\n      network:\n      processes:\n  nginx:\n    endpoint: \"http://localhost:80/status\"\nexporters:\n  otlp:\n    endpoint: \"localhost:4317\"\nservice:\n  pipelines:\n    metrics:\n      receivers: [hostmetrics, nginx]\n      processors: []\n      exporters: [otlp]",
+        "description": "System generated web server configuration",
+        "author": "system"
+      }
+    ]
+  }
+}

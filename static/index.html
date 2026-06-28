@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIOps Dynamic Alerting & Root Cause Analyzer</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header>
+            <div class="brand">
+                <i class="fa-solid fa-brain brain-glow"></i>
+                <div class="brand-text">
+                    <h1>AIOps Portal</h1>
+                    <span class="subtext">Dynamic Alerting & Root Cause Analysis</span>
+                </div>
+            </div>
+            
+            <div class="system-status">
+                <div class="status-indicator">
+                    <span class="status-dot pulsing" id="health-dot"></span>
+                    <span class="status-text" id="health-text">System Live</span>
+                </div>
+                <div class="connection-status">
+                    <span class="badge"><i class="fa-solid fa-server"></i> API Node: Online</span>
+                    <span class="badge ml"><i class="fa-brands fa-redhat"></i> Kafka: Connected</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="grid-layout">
+            
+            <!-- Telemetry Column -->
+            <section class="telemetry-panel glass-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-chart-line header-icon"></i> Real-time Telemetry Stream</h2>
+                    <span class="pulse-ring"></span>
+                </div>
+                <div class="charts-container">
+                    <div class="chart-box">
+                        <div class="chart-header">
+                            <h3>CPU Load Average (1m)</h3>
+                            <span class="chart-value" id="cpu-current">0.00</span>
+                        </div>
+                        <div class="canvas-wrapper">
+                            <canvas id="cpuChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-box">
+                        <div class="chart-header">
+                            <h3>System Memory Utilization</h3>
+                            <span class="chart-value" id="mem-current">0.0%</span>
+                        </div>
+                        <div class="canvas-wrapper">
+                            <canvas id="memChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Alert Feeds Column -->
+            <section class="alerts-panel">
+                
+                <!-- Netcool Panel -->
+                <div class="glass-card deterministic-alerts">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-shield-halved header-icon red-glow"></i> Netcool Alert Console (Static Rules)</h2>
+                        <span class="badge red-bg" id="netcool-count">0 Active</span>
+                    </div>
+                    <div class="alert-feed-wrapper" id="netcool-feed">
+                        <div class="feed-placeholder">
+                            <i class="fa-solid fa-circle-check placeholder-icon green"></i>
+                            <p>No rule violations active in Alertmanager.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ML Anomalies Panel -->
+                <div class="glass-card ml-anomalies">
+                    <div class="card-header">
+                        <h2><i class="fa-solid fa-wand-magic-sparkles header-icon violet-glow"></i> AIOps ML Anomaly Feed (Dynamic)</h2>
+                        <span class="badge violet-bg" id="ml-count">0 Anomalies</span>
+                    </div>
+                    <div class="alert-feed-wrapper" id="ml-feed">
+                        <div class="feed-placeholder">
+                            <i class="fa-solid fa-shieldplaceholder placeholder-icon violet"></i>
+                            <p>No dynamic anomalies detected. Collecting baseline telemetry...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+
+        <!-- Correlation and Simulator Dashboard Section -->
+        <section class="dashboard-footer grid-two-col">
+            
+            <!-- RCA Correlation Panel -->
+            <div class="glass-card rca-card">
+                <div class="card-header border-violet">
+                    <h2><i class="fa-solid fa-network-wired header-icon violet-glow"></i> Automated Root Cause Analysis (RCA) Console</h2>
+                    <span class="badge gold-bg" id="rca-status">Idle</span>
+                </div>
+                <div class="rca-body" id="rca-console">
+                    <div class="rca-placeholder">
+                        <i class="fa-solid fa-magnifying-glass-chart rca-placeholder-icon"></i>
+                        <p>No active anomalies to correlate. Real-time correlation engine is running.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chaos Simulator Panel -->
+            <div class="glass-card simulator-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-skull-crossbones header-icon"></i> Chaos & Metric Simulator Control Board</h2>
+                    <span class="badge" id="sim-status-badge">Simulator Normal</span>
+                </div>
+                
+                <div class="simulator-body">
+                    <p class="sim-description">
+                        Inject workload anomalies into the local system to validate the dynamic alerting pipeline.
+                    </p>
+                    <div class="control-buttons">
+                        <button class="btn btn-warning" id="btn-cpu" onclick="triggerSimulation('cpu')">
+                            <i class="fa-solid fa-microchip btn-icon"></i> Simulate CPU Spike
+                        </button>
+                        <button class="btn btn-warning" id="btn-mem" onclick="triggerSimulation('memory')">
+                            <i class="fa-solid fa-memory btn-icon"></i> Simulate Memory Leak
+                        </button>
+                        <button class="btn btn-danger btn-disabled" id="btn-stop" onclick="stopSimulation()" disabled>
+                            <i class="fa-solid fa-circle-stop btn-icon"></i> Stop Chaos Injection
+                        </button>
+                    </div>
+                    
+                    <div class="sim-flow-chart">
+                        <div class="flow-step" id="flow-sim">
+                            <div class="flow-dot"></div>
+                            <span>1. Chaos Triggered</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                        <div class="flow-step" id="flow-otel">
+                            <div class="flow-dot"></div>
+                            <span>2. OTel Collector Scrapes</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                        <div class="flow-step" id="flow-kafka">
+                            <div class="flow-dot"></div>
+                            <span>3. Kafka Streams Metric</span>
+                        </div>
+                        <div class="flow-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+                        <div class="flow-step" id="flow-aiops">
+                            <div class="flow-dot"></div>
+                            <span>4. AIOps Engine Flags</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </section>
+        
+        <footer>
+            <p>Designed for Advanced AIOps Integration | Pairs Deterministic Netcool with ML Pipelines</p>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

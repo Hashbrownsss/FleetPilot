@@ -1,0 +1,34 @@
+{
+  "Default": {
+    "name": "Default",
+    "description": "Default workstation and generic server fleet.",
+    "config_name": "Database-Nodes",
+    "agent_ids": [
+      "019e87db-e86e-7613-b5c7-b10c35cb552c",
+      "019ec4bb-2782-7ea2-9cc2-ecd74b56c2e7",
+      "019ec4bb-2784-7cee-ba50-397c94e0d128",
+      "019ec4bb-27cc-7c3e-b64f-357da59f33a1",
+      "019ec4bb-2816-71d3-ac0d-9c1fc432f284",
+      "019ecada-bfc3-7580-9330-76bef4c11693"
+    ]
+  },
+  "Database-Nodes": {
+    "name": "Database-Nodes",
+    "description": "Fleet containing PostgreSQL and database instances.",
+    "config_name": "Database-Nodes",
+    "agent_ids": [
+      "virtual-db-node-01",
+      "virtual-db-node-02",
+      "019ec4bb-2782-7ec5-bb17-659485b64251"
+    ]
+  },
+  "Web-Servers": {
+    "name": "Web-Servers",
+    "description": "Fleet containing Nginx and Apache web servers.",
+    "config_name": "Web-Servers",
+    "agent_ids": [
+      "virtual-web-node-01",
+      "virtual-web-node-02"
+    ]
+  }
+}

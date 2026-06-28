@@ -1,0 +1,10 @@
+route:
+  receiver: 'default-receiver'
+  group_by: ['alertname', 'job']
+  group_wait: 10s
+  group_interval: 1m
+  repeat_interval: 1h
+
+receivers:
+  - name: 'default-receiver'
+    # We will eventually configure this to trigger a webhook to our ML Correlator

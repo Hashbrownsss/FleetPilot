@@ -1,0 +1,31 @@
+server:
+  endpoint: wss://opamp-server:4320/v1/opamp
+  tls:
+    insecure_skip_verify: true
+    ca_file: /etc/otel/certs/ca.cert.pem
+    cert_file: /etc/otel/certs/agent5.crt
+    key_file: /etc/otel/certs/agent5.key
+
+capabilities:
+  reports_effective_config: true
+  reports_own_metrics: true
+  reports_health: true
+  accepts_remote_config: true
+  reports_remote_config: true
+  accepts_restart_command: true
+  reports_available_components: true
+  reports_heartbeat: true
+
+agent:
+  executable: /otelcontribcol
+  bootstrap_timeout: 10s
+  passthrough_logs: true
+  config_files:
+    - /etc/otel/config.yaml
+
+storage:
+  directory: /etc/otel/supervisor-data
+
+telemetry:
+  logs:
+    level: debug

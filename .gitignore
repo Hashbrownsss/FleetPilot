@@ -1,0 +1,49 @@
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+env/
+venv/
+
+# SQLite databases
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Dynamic logs / Local JSON stores
+anomalies_log.json
+config_history.json
+ml_history.json
+servicenow_incidents.json
+users.json
+
+# Keys and Certificates
+*.key
+*.pem
+*.csr
+*.crt
+
+# Agent state directories
+fleet_agents/agent-*/certs/*
+!fleet_agents/agent-*/certs/.gitkeep
+fleet_agents/agent-*/supervisor-data/*
+!fleet_agents/agent-*/supervisor-data/.gitkeep
+
+# Large files & Compiler packages
+go1.25.0.linux-amd64.tar.gz
+*.tar.gz
+*.zip
+*.rar
+
+# Node/React overrides (handled in frontend/ but added here for safety)
+frontend/node_modules/
+frontend/dist/
+
+# OS/Editor specific
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db

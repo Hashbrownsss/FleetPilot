@@ -1,0 +1,44 @@
+extensions:
+  opamp:
+    server:
+      ws:
+        endpoint: wss://host.docker.internal:4320/v1/opamp
+        tls:
+          insecure_skip_verify: true
+    capabilities:
+      reports_effective_config: true
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024 
+exporters:
+  logging:
+    loglevel: debug
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    namespace: otelcol
+
+service:
+  extensions: [opamp]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, prometheus]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]

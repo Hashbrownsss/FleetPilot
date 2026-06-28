@@ -1,0 +1,31 @@
+server:
+  endpoint: wss://127.0.0.1:4320/v1/opamp
+  tls:
+    insecure_skip_verify: true
+    ca_file: certs/ca.cert.pem
+    cert_file: certs/client.crt
+    key_file: certs/client.key
+
+capabilities:
+  reports_effective_config: true
+  reports_own_metrics: true
+  reports_health: true
+  accepts_remote_config: true
+  reports_remote_config: true
+  accepts_restart_command: true
+  reports_available_components: true
+  reports_heartbeat: true
+
+agent:
+  executable: ../../opentelemetry-collector-contrib/bin/otelcontribcol.exe
+  bootstrap_timeout: 10s
+  passthrough_logs: true
+  config_files:
+    - collector-supervised.yaml
+
+storage:
+  directory: ./supervisor-data
+
+telemetry:
+  logs:
+    level: debug

@@ -1,0 +1,11 @@
+opamp-go-server:latest 323dc29c057a
+ghcr.io/open-telemetry/opamp-go/opamp-server-example:renovate-willabides-setup-go-faster-1.x-b62aac2 13c95da9e1eb
+prom/prometheus:latest 69f524141883
+otel/opentelemetry-collector-contrib:latest 93aad750175c
+grafana/grafana:latest 2d1f9ae67c17
+curlimages/curl:latest b3f1fb2a51d9
+qdrant/qdrant:latest 0425e3e03e7f
+redis:7 f3cd89d901f3
+hello-world:latest 05813aedc15f
+busybox:stable 73aaf090f3d8
+otel/build-protobuf:0.14.0 785cfb43518c
