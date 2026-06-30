@@ -160,6 +160,9 @@ class LoginPayload(BaseModel):
 
 @router.post("/signup")
 def auth_signup(payload: SignupPayload, request: Request, db: Session = Depends(get_db)):
+    if settings.ENV == "production":
+        raise HTTPException(status_code=403, detail="Local self-registration is disabled in production. Please use Keycloak SSO.")
+        
     user = db.query(User).filter(User.username == payload.username).first()
     if user:
         raise HTTPException(status_code=400, detail="Username already exists")
@@ -181,6 +184,9 @@ def auth_signup(payload: SignupPayload, request: Request, db: Session = Depends(
 
 @router.post("/login")
 def auth_login(payload: LoginPayload, request: Request, db: Session = Depends(get_db)):
+    if settings.ENV == "production":
+        raise HTTPException(status_code=403, detail="Local credentials login is disabled in production. Please use Keycloak SSO.")
+        
     user = db.query(User).filter(User.username == payload.username).first()
     if not user or user.password_hash != hash_password(payload.password):
         raise HTTPException(status_code=401, detail="Invalid username or password")
@@ -198,6 +204,9 @@ def auth_login(payload: LoginPayload, request: Request, db: Session = Depends(ge
 
 @router.post("/docker")
 def auth_docker(request: Request, db: Session = Depends(get_db)):
+    if settings.ENV == "production":
+        raise HTTPException(status_code=403, detail="Docker IDP SSO bypass is disabled in production. Please use Keycloak SSO.")
+        
     username = "docker_admin"
     user = db.query(User).filter(User.username == username).first()
     if not user:

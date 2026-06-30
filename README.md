@@ -1,4 +1,4 @@
-# FleetPilot ✈️
+# FleetPilot 
 
 A stateless **OpAMP Control Plane & Telemetry Fleet Management System** integrated with **Diurnal Machine Learning Anomaly Detection** and **Audit-Log Root Cause Analysis (RCA)**.
 
@@ -6,20 +6,21 @@ A stateless **OpAMP Control Plane & Telemetry Fleet Management System** integrat
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 * **Control Plane (OpAMP Protocol):** Bidirectional management of OpenTelemetry collector configurations ([collector-supervised.yaml](file:///c:/Users/HARSH/Desktop/opamp/fleet_agents/agent-2/collector-supervised.yaml)), config versioning, and deployment rollouts using [opamp-go](file:///c:/Users/HARSH/Desktop/opamp/opamp-go).
+* **Heterogeneous Multi-Agent AI Orchestration:** Powered by LangGraph and Groq, specialized AI agents (`llama-3.3-70b-versatile`, `qwen3-32b`, `llama-4-scout-17b`) autonomously parse natural language requests, generate OTel YAML configurations, create fleets, assign agents, and orchestrate safe rollouts with Human-in-the-Loop approval.
 * **Diurnal ML Anomaly Engine:** Utilizes an unsupervised `IsolationForest` model to establish a weekly diurnal baseline (CPU, memory, disk, network throughput, and processes count) and automatically classify anomalies.
 * **Stateless Scaling (K8s Ready):** Built for Horizontal Pod Autoscaling (HPA) featuring:
   * Centralized SQL Database compatibility (SQLite fallback to PostgreSQL).
   * Stateless HS256 JWT authorization for local credentials and Docker IDP SSO bypass.
   * Load-balanced telemetry parsing utilizing Kafka Consumer Groups.
 * **Incident Audit Correlation:** Automatically correlates detected telemetry metric anomalies with preceding configuration changes, rollback actions, or agent restarts inside a $[-10\text{min}, +2\text{min}]$ window to identify human root causes instantly.
-* **Modern Telemetry Dashboard:** Glassmorphic dashboard built in React + Vite, exposing agent status tables, real-time telemetry graphs, a YAML editor preview sandbox, and warning alert banners.
+* **Modern Telemetry Dashboard:** Glassmorphic dashboard built in React + Vite, exposing an AI chat interface, agent status tables, real-time telemetry graphs, a YAML editor preview sandbox, and warning alert banners.
 
 ---
 
-## 📐 Architecture Overview
+## Architecture Overview
 
 ```mermaid
 graph TD
@@ -54,6 +55,7 @@ graph TD
 
 * **Frontend:** React, Vite, Vanilla CSS (Glassmorphism), Lucide React
 * **Backend:** FastAPI, Python, SQLAlchemy, PyJWT
+* **AI & Orchestration:** LangGraph, Groq API (Llama 3.3, Qwen)
 * **Message Broker:** Apache Kafka (9092/9094)
 * **Datastore:** SQLite (Local development) / PostgreSQL (Cluster production)
 * **Agent Protocol:** OpAMP WebSocket (Go server)
@@ -61,7 +63,7 @@ graph TD
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 * [app/](file:///c:/Users/HARSH/Desktop/opamp/app/): Main Python FastAPI application codebase.
   * [models/](file:///c:/Users/HARSH/Desktop/opamp/app/models/): SQLAlchemy database schemas (e.g. `Anomaly`, `User`, `Agent`, `AuditLog`).
@@ -73,7 +75,7 @@ graph TD
 
 ---
 
-## 🚦 Quick Start
+## Quick Start
 
 ### 1. Prereqs & Infrastructure
 Bring up the Kafka, Keycloak, Prometheus, and supervisor containers:
@@ -101,15 +103,14 @@ Open [http://localhost:5173/](http://localhost:5173/) in your browser.
 
 ---
 
-## 🔐 Stateless Authentication Options
+## Stateless Authentication Options
 
-1. **Docker IDP SSO (Developer Bypass):** Press **"Sign In with Docker IDP"** on the login screen. It sends a stateless payload creating the `docker_admin` session token dynamically using HS256 JWTs.
-2. **Keycloak SSO:** If configuration endpoints are resolved, sign in using default Keycloak authentication mapping.
-3. **Local Credentials:** Admin access using `admin` / `admin123`.
+1. **Keycloak SSO:** If configuration endpoints are resolved, sign in using default Keycloak authentication mapping.
+2. **Local Credentials:** Admin access using `admin` / `admin123`.
 
 ---
 
-## 🧪 Simulating Anomalies and Correlation
+## Simulating Anomalies and Correlation
 
 To test the anomaly detection and dynamic correlation triggers:
 1. Deploys or rollbacks configuration changes to write a record in the `audit_logs` database table.

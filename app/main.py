@@ -23,7 +23,7 @@ from app.routes.simulator import router as simulator_router
 from app.routes.agents import router as agents_router
 from app.routes.metrics import router as metrics_router
 from app.routes.audit import router as audit_router
-
+from app.routes.agent_routes import router as agent_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("FastAPI Lifespan: Initializing database seeder and migrations...")
@@ -77,6 +77,7 @@ app.include_router(simulator_router)
 app.include_router(agents_router)
 app.include_router(metrics_router)
 app.include_router(audit_router)
+app.include_router(agent_router)
 
 # Serve React static bundle
 frontend_dist = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend", "dist")

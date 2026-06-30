@@ -1,4 +1,5 @@
 services:
+
   opamp-server:
     build:
       context: ./opamp-go
@@ -156,18 +157,41 @@ services:
       - kafka
     restart: unless-stopped
 
-  # ----------------------------------------------------
-  # Identity Provider (IdP): Keycloak SSO
-  # ----------------------------------------------------
+  postgres:
+    image: postgres:15
+    container_name: keycloak-postgres
+    environment:
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=keycloak_password
+      - POSTGRES_DB=keycloak
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     container_name: keycloak
-    command: start-dev --import-realm
     environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak_password
       KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin_password
+      KC_HOSTNAME_STRICT: false
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+    command: start-dev --import-realm
     ports:
       - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
     volumes:
       - ./aiops-realm-realm.json:/opt/keycloak/data/import/aiops-realm-realm.json:ro
     restart: unless-stopped
@@ -176,3 +200,5 @@ volumes:
   prometheus-data:
   grafana-data:
   kafka_data: 
+  postgres_data:
+    name: keycloak_postgres_data

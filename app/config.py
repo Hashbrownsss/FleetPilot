@@ -1,6 +1,18 @@
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 class Settings:
+    # Environment Mode
+    ENV = os.getenv("ENV", "development") # "development" | "production"
+
+    # Agent Configurations
+    GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
+    AGENT_CHECKPOINT_DB = os.getenv("AGENT_CHECKPOINT_DB", "./agent_checkpoints.db")
+    AGENT_MODEL = os.getenv("AGENT_MODEL", "gemini-1.5-pro")
+    BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://localhost:8000")
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+
     # OpAMP Server connection
     OPAMP_SERVER_URL = os.getenv("OPAMP_SERVER_URL", "http://127.0.0.1:4321")
     

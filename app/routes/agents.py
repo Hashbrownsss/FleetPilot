@@ -769,3 +769,32 @@ def send_custom_message(instance_id: str, payload: CustomMessagePayload, request
         return {"status": "success", "message": "Custom message successfully queued to agent."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/api/opamp/ack/{agent_name}")
+def get_agent_ack(agent_name: str, db: Session = Depends(get_db), current_user = Depends(verify_any_role)):
+    norm_target = agent_name.lower().replace(" ", "").replace("-", "").replace("_", "")
+    
+    # Try exact match first
+    agent = db.query(Agent).filter(Agent.name == agent_name).first()
+    if not agent:
+        agent = db.query(Agent).filter(Agent.id == agent_name).first()
+        
+    # If not found, fuzzy match all agents
+    if not agent:
+        all_agents = db.query(Agent).all()
+        for a in all_agents:
+            norm_a_name = a.name.lower().replace(" ", "").replace("-", "").replace("_", "")
+            norm_a_id = a.id.lower().replace("-", "")
+            if norm_target in norm_a_name or norm_target in norm_a_id:
+                agent = a
+                break
+
+    if not agent:
+        raise HTTPException(status_code=404, detail="Agent not found")
+        
+    is_healthy = agent.status == "Healthy"
+    return {
+        "status": "acknowledged" if is_healthy else "pending",
+        "acknowledged": is_healthy
+    }
+

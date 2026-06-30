@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fleetpilot-backend
+  labels:
+    app: fleetpilot-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fleetpilot-backend
+  template:
+    metadata:
+      labels:
+        app: fleetpilot-backend
+    spec:
+      containers:
+      - name: backend
+        image: hashbrownsss/fleetpilot-backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          value: "postgresql://postgres:securepassword@postgres-service.default.svc.cluster.local:5432/fleetpilot"
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka-service.default.svc.cluster.local:9092"
+        - name: JWT_SECRET
+          value: "AIOps_WT_Key_456!"
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetpilot-backend-service
+spec:
+  selector:
+    app: fleetpilot-backend
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP

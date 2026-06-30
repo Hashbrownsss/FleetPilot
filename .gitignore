@@ -47,3 +47,4 @@ frontend/dist/
 .idea/
 .vscode/
 Thumbs.db
+.env   

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import yaml from 'js-yaml';
+import AgentChat from './components/AgentChat';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -183,6 +184,7 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('aiops_token') || '');
   const [role, setRole] = useState(localStorage.getItem('aiops_role') || '');
   const [username, setUsername] = useState(localStorage.getItem('aiops_username') || '');
+  const [isAgentChatOpen, setIsAgentChatOpen] = useState(false);
   const [authTab, setAuthTab] = useState('login'); // 'login' | 'signup'
   const [authUsername, setAuthUsername] = useState('');
   const [authPassword, setAuthPassword] = useState('');
@@ -4229,6 +4231,12 @@ function App() {
           >
             <ShieldCheck size={16} /> Audit Trail
           </button>
+          <button
+            className={`sidebar-nav-btn ${activeTab === 'orchestrator' ? 'active' : ''}`}
+            onClick={() => setActiveTab('orchestrator')}
+          >
+            <Brain size={16} /> AI Orchestrator
+          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -4248,6 +4256,12 @@ function App() {
       <div className="main-panel">
         <header className="main-header">
           <div className="header-status">
+            <button 
+                onClick={() => setActiveTab('orchestrator')}
+                className="bg-blue-600/20 text-blue-400 hover:bg-blue-600/40 px-3 py-1.5 rounded-full flex items-center gap-2 text-sm mr-4 transition-colors border border-blue-500/30"
+            >
+                <Brain size={14} /> AI Orchestrator
+            </button>
             <div className="status-capsule">
               <span className={`status-dot ${statusClass}`}></span>
               <span>{statusText}</span>
@@ -4611,6 +4625,7 @@ function App() {
           {activeTab === 'fleets' && renderFleetsTab()}
           {activeTab === 'configurations' && renderConfigurationsTab()}
           {activeTab === 'audit' && renderAuditTab()}
+          {activeTab === 'orchestrator' && <AgentChat isOpen={true} inline={true} username={username} />}
         </main>
 
         <footer className="app-footer">
